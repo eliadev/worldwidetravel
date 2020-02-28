@@ -1,5 +1,62 @@
-@extends('layouts.header')
-	@section('content')
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <title>WorldWide Travel & Tourism CRM</title>   
+	  <link rel="stylesheet" href="{{asset('assets/plugins/bootstrap/css/bootstrap.min.css')}}">
+	  <link rel="stylesheet" href="{{asset('assets/plugins/perfect-scrollbar/css/perfect-scrollbar.css')}}">
+      <link rel="stylesheet" href="{{asset('assets/plugins/chartist-js/dist/chartist.min.css')}}">
+      <link rel="stylesheet" href="{{asset('assets/plugins/chartist-plugin-tooltip-master/dist/chartist-plugin-tooltip.css')}}">
+      <link rel="stylesheet" href="{{asset('assets/plugins/c3-master/c3.min.css')}}">
+      <link rel="stylesheet" href="{{asset('assets/plugins/datatables.net-bs4/css/dataTables.bootstrap4.min.css')}}">
+	  <link rel="stylesheet" href="{{asset('assets/plugins/select2/dist/css/select2.min.css')}}">
+	  <link rel="stylesheet" href="{{asset('assets/plugins/switchery/dist/switchery.min.css')}}">
+	  <link rel="stylesheet" href="{{asset('assets/plugins/summernote/summernote-bs4.css')}}">
+      <link rel="stylesheet" href="{{asset('assets/css/style.css')}}">
+      <link rel="stylesheet" href="{{asset('assets/css/pages/dashboard3.css')}}">
+      <link rel="stylesheet" href="{{asset('assets/css/colors/default-dark.css')}}">
+	  <link rel="stylesheet" href="{{asset('assets/plugins/bootstrap-datepicker/bootstrap-datepicker.min.css')}}">
+	  <link rel="stylesheet" href="{{asset('assets/plugins/timepicker/bootstrap-timepicker.min.css')}}">
+      <link rel="stylesheet" href="{{asset('assets/plugins/daterangepicker/daterangepicker.css')}}">
+   </head>
+   <body class="fix-header fix-sidebar card-no-border">
+      <!--<div class="preloader">
+         <div class="loader">
+            <div class="loader__figure"></div>
+            <p class="loader__label">World Wide Travel</p>
+         </div>
+      </div>-->
+	  <div id="main-wrapper">
+		 <header class="topbar">
+			<nav class="navbar top-navbar navbar-expand-md navbar-light">
+			   <div class="navbar-header">
+				  <a class="navbar-brand" href="/">
+				  <b>
+				  <img src="{{asset('assets/img/logo-icon.png')}}" alt="" width="80" class="dark-logo" />
+				  </b>
+				  <span>
+				  <img src="{{asset('assets/img/logo-text.png')}}" width="130" alt="" class="dark-logo" />
+				  </span> 
+				  </a>
+			   </div>
+			   <div class="navbar-collapse">
+				  <ul class="navbar-nav mr-auto">
+					 <li class="nav-item"> <a class="nav-link nav-toggler hidden-md-up waves-effect waves-dark" href="javascript:void(0)"><i class="ti-menu"></i></a> </li>
+					 <li class="nav-item"> <a class="nav-link sidebartoggler hidden-sm-down waves-effect waves-dark" href="javascript:void(0)"><i class="ti-menu"></i></a> </li>
+				  </ul>
+				  
+			   </div>
+			</nav>
+		 </header>
+		 <aside class="left-sidebar">
+			<div class="scroll-sidebar">
+			   <nav class="sidebar-nav">
+			   </nav>
+			</div>
+		 </aside>
+	</div>
 <div class="page-wrapper">
       <div class="container-fluid">
          <div class="row page-titles">
@@ -10,15 +67,10 @@
                <ol class="breadcrumb">
                   <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
                   <li class="breadcrumb-item active"><a href="{{ route('clients.index') }}">Clients</a></li>
-				  <li class="breadcrumb-item active">Edit Client</li>
+				  <li class="breadcrumb-item active">Create Client</li>
                </ol>
             </div>
          </div>
-		@if(session()->has('message'))
-			<div class="alert alert-success">
-				{{session()->get('message')}}
-			</div>
-		@endif
 		@if($errors->all())
 			<div class="alert alert-danger">
 				<ul>
@@ -28,8 +80,12 @@
 				</ul> 
 			</div>
 		@endif
-		{!! Form::model( $client, ['route' => ['clients.update', $client->id], 'method' => 'POST', 'files' => true ]) !!}
-		@method('put')
+		@if(session()->has('message'))
+			<div class="alert alert-success">
+				{{session()->get('message')}}
+			</div>
+		@endif
+		{!! Form::open(['route' => 'wwt.store', 'method' => 'POST', 'files' => true ]) !!}
 		@csrf
         <div class="row">
 			<div class="col-lg-9">
@@ -58,18 +114,14 @@
 							<div class="row">
 								<div class="col-md-6">
 									<div class="form-group">
-										<label class="control-label">Gender</label>
-										<select class="form-control custom-select" name="gender">
-											<option disabled selected hidden>--Select Gender--</option>
-											<option value="male" {{ old("gender", $client->gender) == "male" ? "selected" : "" }}>Male</option>
-											<option value="female" {{ old("gender", $client->gender) == "female" ? "selected" : "" }}>Female</option>
-										</select>
+										{!! Form::label('gender', 'Gender', ['class' => 'control-label']) !!}
+										{!! Form::select('gender', ['male' => 'Male', 'female' => 'Female'], null, ['class' => 'form-control custom-select', 'required']) !!}
 									</div>
 								</div>
 								<div class="col-md-6">
 									<div class="form-group">
 										{!! Form::label('date_of_birth', 'Date of Birth*', ['class' => 'control-label']) !!}
-										{!! Form::text('date_of_birth', null, ['class' => 'form-control singledate', 'required']) !!}
+										{!! Form::text('date_of_birth', null, ['class' => 'form-control  singledate', 'required']) !!}
 									</div>
 								</div>
 							</div>
@@ -104,16 +156,13 @@
 							<div class="row">
 								<div class="col-md-6">
 									<div class="form-group">
-										<!--<label class="control-label">Type</label>
-										<select class="form-control custom-select" name="type">
-											<option disabled selected hidden>--Select Type--</option>
-											<option value="Customer" {{ old("type", $client->type) == "Customer" ? "selected" : "" }}>Customer</option>
-											<option value="Supplier" {{ old("type", $client->type) == "Supplier" ? "selected" : "" }}>Supplier</option>
-											<option value="MICE" {{ old("type", $client->type) == "MICE" ? "selected" : "" }}>MICE</option>
-											<option value="Other" {{ old("type", $client->type) == "Other" ? "selected" : "" }}>Other</option>
-										</select>-->
-										{!! Form::label('type', 'Type', ['class' => 'control-label']) !!}
-										{!! Form::select('type', ['Customer' => 'Customer', 'Supplier' => 'Supplier', 'MICE' => 'MICE', 'Other' => 'Other'], null, ['class' => 'form-control custom-select']) !!}
+										<!--<label for="type" class="control-label">Type</label>-->
+										<select hidden class="form-control custom-select" name="type">
+											<option selected value="customer">Customer</option>
+											<option value="supplier">Supplier</option>
+											<option value="MICE">MICE</option>
+											<option value="Other">Other</option>
+										</select>
 									</div>
 								</div>
 								<div class="col-md-6">
@@ -131,17 +180,9 @@
 									</div>
 								</div>
 								<div class="col-md-6">
-									<div class="row">
-										<div class="col-md-8">
-											<div class="form-group">
-												{!! Form::label('avatar', 'Avatar', ['class' => 'control-label']) !!}
-												{!! Form::file('avatar', ['class' => 'form-control upl-file']) !!}
-											</div>
-										</div>
-										<div class="col-md-4">
-											<img src="{{$client->getFirstMediaUrl('client-avatar', 'thumb')}}">
-											{!! Form::checkbox('delete_existing_avatar', 1, null, ['class' => 'js-switch', 'data-color'=> '#009efb']) !!}
-										</div>
+									<div class="form-group">
+										{!! Form::label('avatar', 'Avatar') !!}
+										{!! Form::file('avatar', ['class' => 'form-control upl-file']) !!}
 									</div>
 								</div>
 							</div>
@@ -191,18 +232,10 @@
 										{!! Form::date('expiry_date', null, ['class' => 'form-control']) !!}
 									</div>
 								</div>
-								<div class="col-md-6">
-									<div class="row">
-										<div class="col-md-8">
-											<div class="form-group">
-												{!! Form::label('image', 'Photo Passport', ['class' => 'control-label']) !!}
-												{!! Form::file('image', ['class' => 'form-control upl-file']) !!}
-											</div>
-										</div>
-										<div class="col-md-4">
-											<img src="{{$client->getFirstMediaUrl('client', 'thumb')}}">
-											{!! Form::checkbox('delete_existing_image', 1, null, ['class' => 'js-switch', 'data-color'=> '#009efb']) !!}
-										</div>
+								<div class="col-md-4">
+									<div class="form-group">
+										{!! Form::label('image', 'Passport*') !!}
+										{!! Form::file('image', ['class' => 'form-control upl-file', 'required']) !!}
 									</div>
 								</div>
 							</div>
@@ -227,7 +260,7 @@
 					</div>
 					<div class="card-body">
 						<div class="form-actions">
-							{!! Form::submit('Update', ['class' => 'btn btn-success btn-width m-b-10']) !!}
+							{!! Form::submit('Save', ['class' => 'btn btn-success btn-width m-b-10']) !!}
 							<a href="{{route('clients.index')}}" class="btn btn-inverse btn-width">Back</a>
 						</div>
 					</div>
@@ -255,6 +288,7 @@
 	<script src="{{asset('assets/plugins/bootstrap-datepicker/bootstrap-datepicker.min.js')}}"></script>
 	<script src="{{asset('assets/plugins/timepicker/bootstrap-timepicker.min.js')}}"></script>
     <script src="{{asset('assets/plugins/daterangepicker/daterangepicker.js')}}"></script>
+	
 	<script>
     $(function() {
         // Switchery
@@ -275,4 +309,3 @@
 	</script>
    </body>
 </html>
-@endsection

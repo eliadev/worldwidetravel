@@ -11,18 +11,18 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
 class Client extends Model implements HasMedia
 {
     use HasMediaTrait, Notifiable;
-	
+
     protected $table="clients";
 	protected $fillable = ['fullname', 'gender', 'date_of_birth', 'email', 'mobile', 'company', 'website', 'position', 'type', 'hotline', 'miles', 'country', 'city', 'postcode', 'passport_nb', 'issuance_date', 'expiry_date', 'comment'];
 
 
     protected $appends = ['total_packages', 'total_price', 'points_earned', 'loyalty_card_id', 'slug'];
-	
+
 	public function packages()
     {
         return $this->hasMany('App\Package');
     }
-	
+
 	public function registerMediaConversions(Media $media = null)
     {
         $this->addMediaConversion('thumb')
@@ -30,7 +30,7 @@ class Client extends Model implements HasMedia
             ->height(100);
     }
 
-    public function getTotalPackagesAttribute() 
+    public function getTotalPackagesAttribute()
     {
         return $this->packages->count();
     }
@@ -45,7 +45,7 @@ class Client extends Model implements HasMedia
     {
         $total = $this->packages->sum('price');
         // every 50$ = 1 point
-        return floor($total / 50); 
+        return floor($total / 50);
     }
 
    /* public function getFullNameAttribute()

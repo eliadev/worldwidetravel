@@ -26,6 +26,8 @@ class ClientRequest extends FormRequest
         return [
             'fullname' 		=> 'required|min:3',
 			'email' 		=> 'required|string|email|max:255|unique:clients,email',
+			'avatar' 		=> 'required|image|mimes:jpeg,png,jpg,gif,svg|max:1048',
+			'image' 		=> 'required|image|mimes:jpeg,png,jpg,gif,svg|max:1048',
         ];
     }
 	   
